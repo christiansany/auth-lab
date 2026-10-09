@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
+import { cache } from "react";
 import { db, type User } from "./db";
 
 // A session is a long random token in a cookie named "session", plus a row
@@ -35,7 +36,11 @@ export async function createSession(userId: number): Promise<void> {
   cookieStore.set(cookieName, token, { ...cookieOptions, expires: new Date(expiresAt) });
 }
 
-export async function getCurrentUser(): Promise<User | null> {
+// cache() from React remembers the result for one request. The header calls
+// getCurrentUser() to show your name, and getMyNotes() calls it again through
+// verifySession(). The session is still looked up only once. The next request
+// starts with an empty cache.
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   const cookieStore = await cookies();
   const token = cookieStore.get(cookieName)?.value;
   if (!token) return null;
@@ -49,7 +54,7 @@ export async function getCurrentUser(): Promise<User | null> {
     .get(hashToken(token)) as User | undefined;
 
   return user ?? null;
-}
+});
 
 export async function deleteSession(): Promise<void> {
   const cookieStore = await cookies();
