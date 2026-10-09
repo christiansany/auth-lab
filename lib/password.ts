@@ -19,15 +19,9 @@ export async function hashPassword(password: string): Promise<string> {
   return `${salt.toString("hex")}:${hash.toString("hex")}`;
 }
 
-// TODO, step 2: check a password against the stored "salt:hash" string.
-// - Split the stored value at the colon into salt and hash.
-// - Turn both back into bytes with Buffer.from(text, "hex").
-// - Derive a new hash: await derive(password, salt)
-// - Compare it with the stored hash using timingSafeEqual(a, b), and return
-//   the result.
-//
-// Why timingSafeEqual and not ===? It always takes the same time, so an
-// attacker cannot measure how many bytes were right.
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  return false;
+  const [saltHex, hashHex] = stored.split(":");
+  const expected = Buffer.from(hashHex, "hex");
+  const actual = await derive(password, Buffer.from(saltHex, "hex"));
+  return timingSafeEqual(actual, expected);
 }
