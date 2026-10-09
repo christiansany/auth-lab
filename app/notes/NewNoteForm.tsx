@@ -5,12 +5,11 @@ import { createNote, type NoteFormState } from "./actions";
 
 const initialState: NoteFormState = { error: null };
 
-export function NewNoteForm({ userId }: { userId: number }) {
+export function NewNoteForm() {
   const [state, formAction, pending] = useActionState(createNote, initialState);
 
   return (
     <form action={formAction} className="card form">
-      <input type="hidden" name="userId" value={userId} />
       <label>
         Title
         <input name="title" required maxLength={100} />

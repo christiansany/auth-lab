@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
+import { UserMenu } from "./UserMenu";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +16,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Link href="/" className="brand">
             Notes
           </Link>
+          {/* The menu reads the session cookie, so it waits for the request. */}
+          <Suspense fallback={null}>
+            <UserMenu />
+          </Suspense>
         </header>
         {children}
       </body>
