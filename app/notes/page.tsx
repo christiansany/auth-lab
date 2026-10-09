@@ -1,19 +1,14 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getNotes } from "@/lib/dal";
-import { getCurrentUser } from "@/lib/session";
+import { getMyNotes } from "@/lib/dal";
 import { deleteNote } from "./actions";
 import { NewNoteForm } from "./NewNoteForm";
 
 export default async function NotesPage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
-
-  const notes = await getNotes(user.id);
+  const notes = await getMyNotes();
 
   return (
     <main className="page">
-      <h1>{user.name}&apos;s notes</h1>
+      <h1>Your notes</h1>
       <ul className="notes">
         {notes.map((note) => (
           <li key={note.id} className="card note">

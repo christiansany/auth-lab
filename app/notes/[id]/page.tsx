@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getNote } from "@/lib/dal";
-import { getCurrentUser } from "@/lib/session";
 
 export default async function NotePage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
-
   const { id } = await params;
   const note = await getNote(Number(id));
   if (!note) notFound();
